@@ -2,7 +2,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,7 +15,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -37,68 +35,40 @@ import Logo from '@/components/logo';
 import type { UserRole } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 
-const baseSchema = z.object({
-  name: z.string().min(1, 'Full name is required'),
+const formSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
   role: z.enum(['student', 'admin', 'parent']),
 });
-
-const studentSchema = baseSchema.extend({
-  role: z.literal('student'),
-  class: z.string().min(1, 'Class/Section is required'),
-  rollNo: z.string().min(1, 'Roll number is required'),
-});
-
-const teacherSchema = baseSchema.extend({
-  role: z.literal('admin'),
-  subjects: z.string().min(1, 'Subject(s) is required'),
-});
-
-const parentSchema = baseSchema.extend({
-    role: z.literal('parent'),
-    studentId: z.string().min(1, "Child's Roll No./ID is required"),
-});
-
-const formSchema = z.discriminatedUnion('role', [
-  studentSchema,
-  teacherSchema,
-  parentSchema,
-]);
 
 type FormValues = z.infer<typeof formSchema>;
 
 export default function RegisterPage() {
-  const router = useRouter();
   const { toast } = useToast();
-  const [role, setRole] = useState<UserRole>('student');
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmailSent, setIsEmailSent] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      role: 'student',
-      name: '',
       email: '',
-      password: '',
-      class: '',
-      rollNo: '',
+      role: 'student',
     },
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
     try {
-      // In a real app, this would be an API call
-      console.log('Form submitted', data);
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Account Created!",
-        description: "You have successfully signed up. Please log in.",
+      const response = await fetch('/api/auth/send-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
-      router.push('/login');
+
+      if (!response.ok) {
+        throw new Error('Failed to send verification email.');
+      }
+      
+      setIsEmailSent(true);
 
     } catch (error) {
       toast({
@@ -110,20 +80,30 @@ export default function RegisterPage() {
         setIsLoading(false);
     }
   };
+  
+  if (isEmailSent) {
+      return (
+        <div className="flex min-h-screen flex-col items-center justify-center p-4">
+             <div className="absolute top-8 left-8">
+                <Logo />
+            </div>
+            <Card className="w-full max-w-md text-center">
+                <CardHeader>
+                    <CardTitle className="font-headline text-3xl">Check Your Email</CardTitle>
+                    <CardDescription>
+                        We've sent a verification link to the email address you provided. Please click the link to continue.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                        Didn't receive an email? <Button variant="link" className="p-0 h-auto" onClick={() => form.handleSubmit(onSubmit)()}>Resend Link</Button>
+                    </p>
+                </CardContent>
+            </Card>
+        </div>
+      )
+  }
 
-  const handleRoleChange = (value: string) => {
-    const newRole = value as UserRole;
-    setRole(newRole);
-    form.setValue('role', newRole);
-    // Reset role-specific fields when role changes
-    if (newRole === 'student') {
-        form.reset({ ...form.getValues(), role: 'student', subjects: undefined, studentId: undefined });
-    } else if (newRole === 'admin') {
-        form.reset({ ...form.getValues(), role: 'admin', class: undefined, rollNo: undefined, studentId: undefined });
-    } else if (newRole === 'parent') {
-        form.reset({ ...form.getValues(), role: 'parent', class: undefined, rollNo: undefined, subjects: undefined });
-    }
-  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
@@ -144,19 +124,6 @@ export default function RegisterPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -168,19 +135,7 @@ export default function RegisterPage() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            
               <FormField
                 control={form.control}
                 name="role"
@@ -188,10 +143,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Your Role</FormLabel>
                     <Select
-                      onValueChange={(value) => {
-                        field.onChange(value as UserRole);
-                        handleRoleChange(value);
-                      }}
+                      onValueChange={(value) => field.onChange(value as UserRole)}
                       defaultValue={field.value}
                     >
                       <FormControl>
@@ -210,71 +162,9 @@ export default function RegisterPage() {
                 )}
               />
 
-              {role === 'student' && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="class"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Class/Section</FormLabel>
-                        <FormControl>
-                           <Input placeholder="e.g. 10A" {...field as any} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="rollNo"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Roll No.</FormLabel>
-                        <FormControl>
-                           <Input placeholder="e.g. 21" {...field as any} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
-              )}
-
-              {role === 'admin' && (
-                <FormField
-                  control={form.control}
-                  name="subjects"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Subject(s)</FormLabel>
-                      <FormControl>
-                         <Input placeholder="e.g. Mathematics, Science" {...field as any} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-               {role === 'parent' && (
-                <FormField
-                  control={form.control}
-                  name="studentId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Child's Roll No./ID</FormLabel>
-                      <FormControl>
-                         <Input placeholder="e.g. S001" {...field as any} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
               <Button type="submit" className="w-full" disabled={isLoading}>
                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Creating Account..." : "Create Account"}
+                {isLoading ? "Sending Link..." : "Send Verification Email"}
               </Button>
             </form>
           </Form>
