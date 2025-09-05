@@ -31,6 +31,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Logo from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { UserRole } from "@/lib/types";
+import { users } from "@/lib/data";
 
 type NavLink = {
   href: string;
@@ -79,7 +80,8 @@ function NavContent({ role }: { role: UserRole }) {
 }
 
 function Header({ role }: { role: UserRole }) {
-    const userInitial = "A";
+    const user = users[`${role}@educlarity.com`];
+    const userInitial = user ? user.name.charAt(0).toUpperCase() : role.charAt(0).toUpperCase();
 
     return (
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
