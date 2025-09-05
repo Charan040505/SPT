@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Bar,
@@ -12,7 +14,7 @@ import {
   RadialBar,
   PolarAngleAxis
 } from "recharts";
-import { classPerformance, performanceData } from "@/lib/data";
+import { classPerformance } from "@/lib/data";
 
 const attendanceStatus = [
     { name: 'Above 90%', value: 70, fill: 'hsl(var(--chart-1))' },
