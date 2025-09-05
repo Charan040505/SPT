@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -81,7 +83,7 @@ export default function AdminView() {
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value) => `${value}%`}
+                  tickFormatter={(value) => `${'\'\'\'\'\'\'' + value}%`}
                 />
                 <Tooltip
                   cursor={{ fill: "hsl(var(--muted))" }}
