@@ -16,6 +16,8 @@ import { students, classPerformance } from "@/lib/data";
 
 export default function AdminView() {
   const studentsAtRisk = students.filter(s => s.status === 'At Risk' || s.status === 'Needs Improvement');
+  const totalStudents = students.length;
+  const atRiskPercentage = totalStudents > 0 ? ((studentsAtRisk.length / totalStudents) * 100).toFixed(1) : 0;
 
   return (
     <div className="space-y-6">
@@ -57,7 +59,7 @@ export default function AdminView() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{studentsAtRisk.length}</div>
-            <p className="text-xs text-muted-foreground">Action required</p>
+            <p className="text-xs text-muted-foreground">{atRiskPercentage}% of students require attention</p>
           </CardContent>
         </Card>
       </div>
