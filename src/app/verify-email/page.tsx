@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import Logo from '@/components/logo';
 
 function VerifyEmailContent() {
     const router = useRouter();
@@ -29,7 +30,10 @@ function VerifyEmailContent() {
     }, [token, router]);
 
     return (
-         <div className="flex min-h-screen items-center justify-center">
+         <div className="flex min-h-screen flex-col items-center justify-center p-4">
+             <div className="absolute top-8 left-8">
+                <Logo />
+            </div>
             <Card className="w-full max-w-md text-center">
                 <CardHeader>
                     <CardTitle className="font-headline text-3xl">
@@ -54,7 +58,11 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={
+            <div className="flex min-h-screen flex-col items-center justify-center p-4">
+                <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
+            </div>
+        }>
             <VerifyEmailContent />
         </Suspense>
     )

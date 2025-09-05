@@ -70,11 +70,11 @@ export default function RegisterPage() {
       
       setIsEmailSent(true);
 
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "There was a problem with your request.",
+        description: error.message || "There was a problem with your request.",
       });
     } finally {
         setIsLoading(false);

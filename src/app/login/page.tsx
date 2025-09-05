@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -16,15 +17,51 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Logo from '@/components/logo';
 import type { UserRole } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [role, setRole] = useState<UserRole>('admin');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // In a real app, you'd perform authentication here
-    router.push(`/dashboard?role=${role}`);
+    setIsLoading(true);
+
+    const email = (e.currentTarget.elements.namedItem(`${role}-email`) as HTMLInputElement).value;
+    const password = (e.currentTarget.elements.namedItem(`${role}-password`) as HTMLInputElement).value;
+
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, role })
+        });
+        
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Login failed.');
+        }
+
+        toast({
+            title: "Login Successful",
+            description: "Welcome back!",
+        });
+
+        router.push(`/dashboard?role=${role}`);
+
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Login Failed",
+            description: error.message,
+        });
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   const LoginForm = ({ currentRole }: { currentRole: UserRole }) => (
@@ -33,6 +70,7 @@ export default function LoginPage() {
         <Label htmlFor={`${currentRole}-email`}>Email</Label>
         <Input
           id={`${currentRole}-email`}
+          name={`${currentRole}-email`}
           type="email"
           placeholder="m@example.com"
           required
@@ -43,13 +81,15 @@ export default function LoginPage() {
         <Label htmlFor={`${currentRole}-password`}>Password</Label>
         <Input
           id={`${currentRole}-password`}
+          name={`${currentRole}-password`}
           type="password"
           required
           defaultValue="password"
         />
       </div>
-      <Button type="submit" className="w-full">
-        Login
+      <Button type="submit" className="w-full" disabled={isLoading}>
+         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {isLoading ? "Logging in..." : "Login"}
       </Button>
     </form>
   );
