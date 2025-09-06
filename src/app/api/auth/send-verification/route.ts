@@ -47,9 +47,13 @@ async function sendVerificationEmail(email: string, url: string) {
         await sgMail.send(msg);
         console.log(`Verification email sent successfully to ${email}`);
     } catch (error: any) {
-        console.error('Error sending verification email with SendGrid:', JSON.stringify(error, null, 2));
-        // Provide a more user-friendly error message
-        throw new Error('Could not send verification email. Please ensure the sender email is verified in SendGrid.');
+        console.error('Error sending verification email with SendGrid:');
+        if (error.response) {
+            console.error(error.response.body)
+        } else {
+            console.error(error);
+        }
+        throw new Error('Could not send verification email. Please ensure the sender email is verified in your SendGrid account.');
     }
 }
 
