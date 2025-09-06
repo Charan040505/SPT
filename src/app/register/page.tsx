@@ -63,9 +63,11 @@ export default function RegisterPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+      
+      const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error('Failed to send verification email.');
+        throw new Error(responseData.message || 'Failed to send verification email.');
       }
       
       setIsEmailSent(true);
