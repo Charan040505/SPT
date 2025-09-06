@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { verify, sign } from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import { users } from '@/lib/data';
 import type { UserRole, User } from '@/lib/types';
 
@@ -15,12 +15,17 @@ export async function POST(request: Request) {
     const secret = process.env.JWT_SECRET || 'your-super-secret-key';
 
     try {
-        const decoded = verify(token, secret) as { email: string, role: UserRole, verificationToken: string };
+        const decoded = verify(token, secret) as { email: string, role: UserRole };
         
+        // Find user by token, not by email, as the token is the verifiable credential
         const user = Object.values(users).find(u => u.verificationToken === token);
 
         if (!user || user.email !== decoded.email) {
             return NextResponse.json({ message: 'Invalid verification token.' }, { status: 400 });
+        }
+        
+        if (user.isVerified) {
+            return NextResponse.json({ message: 'Email is already verified.' }, { status: 200 });
         }
 
         // Mark user as verified
