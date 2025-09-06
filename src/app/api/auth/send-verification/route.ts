@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { sign } from 'jsonwebtoken';
 import sgMail from '@sendgrid/mail';
 
-// Initialize SendGrid
+// Initialize SendGrid only if the key is present
 if (process.env.SENDGRID_API_KEY) {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
@@ -18,7 +18,6 @@ async function sendVerificationEmail(email: string, url: string) {
         console.log("Body: Please click the link below to verify your email address:");
         console.log(url);
         console.log("--- END SIMULATED EMAIL ---");
-        // In a real app, you'd throw an error here. For dev, we'll allow it to proceed.
         return; 
     }
 
