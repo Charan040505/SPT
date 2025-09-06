@@ -9,20 +9,17 @@ if (process.env.SENDGRID_API_KEY) {
 }
 
 async function sendVerificationEmail(email: string, url: string) {
+    // If SendGrid isn't configured, simulate the email for development
     if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
-        const errorMessage = "Email service is not configured. SENDGRID_API_KEY or SENDGRID_FROM_EMAIL is not set.";
-        console.error(errorMessage);
-        // In a real production environment, you should throw an error to prevent signup flow from proceeding.
-        // For development, we can log to the console and simulate success.
         console.log("--- SIMULATED EMAIL ---");
+        console.log("Email service is not configured. Simulating email send.");
         console.log(`To: ${email}`);
         console.log("Subject: Verify your email for EduClarity");
         console.log("Body: Please click the link below to verify your email address:");
         console.log(url);
         console.log("--- END SIMULATED EMAIL ---");
-        // To avoid breaking the flow in dev when keys are not set, we won't throw an error here.
-        // In a live app, this should be: throw new Error(errorMessage);
-        return;
+        // In a real app, you'd throw an error here. For dev, we'll allow it to proceed.
+        return; 
     }
 
     const msg = {
@@ -53,6 +50,7 @@ async function sendVerificationEmail(email: string, url: string) {
         } else {
             console.error(error);
         }
+        // Provide a more helpful error message for the most common issue.
         throw new Error('Could not send verification email. Please ensure the sender email is verified in your SendGrid account.');
     }
 }
@@ -75,7 +73,7 @@ export async function POST(request: Request) {
     url.searchParams.set('token', token);
 
 
-    // Send the email.
+    // Send the email (or simulate it).
     await sendVerificationEmail(email, url.toString());
     
     return NextResponse.json({ message: 'Verification email sent.' }, { status: 200 });
