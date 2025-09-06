@@ -12,10 +12,11 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { performanceData, students, studentAttendanceData, studentAttendanceTrend, studentMarksData } from "@/lib/data";
+import { performanceData, students, studentAttendanceData, studentAttendanceTrend, studentMarksData, timetableData } from "@/lib/data";
 import PersonalizedRecommendations from "./personalized-recommendations";
 import AttendanceTracker from "./attendance-tracker";
 import MarksViewer from "./marks-viewer";
+import TimetableView from "./timetable-view";
 
 export default function StudentView() {
   const student = students.find(s => s.id === 'S001')!;
@@ -74,6 +75,10 @@ export default function StudentView() {
             <p className="text-xs text-muted-foreground">Scored over 90%</p>
           </CardContent>
         </Card>
+      </div>
+
+       <div className="space-y-6">
+        <TimetableView timetableData={timetableData} />
       </div>
 
        <div className="space-y-6">

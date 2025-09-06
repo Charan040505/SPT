@@ -1,5 +1,5 @@
 
-import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks } from '@/lib/types';
+import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry } from '@/lib/types';
 
 export const users: Record<string, User> = {
   'admin@educlarity.com': {
@@ -152,4 +152,35 @@ export const studentMarksData: StudentMarks[] = [
     { subject: 'Science', ...calculateMarks(40, 48, 49) },
     { subject: 'History', ...calculateMarks(48, 49, 50) },
     { subject: 'English', ...calculateMarks(35, 40, 42) },
+];
+
+export const timetableData: TimetableEntry[] = [
+  // Monday
+  { day: 'Monday', period: 1, subject: 'Mathematics', teacher: 'Mr. Smith', startTime: '09:00', endTime: '10:00' },
+  { day: 'Monday', period: 2, subject: 'Science', teacher: 'Ms. Jones', startTime: '10:00', endTime: '11:00' },
+  { day: 'Monday', period: 3, subject: 'History', teacher: 'Mr. Davis', startTime: '11:00', endTime: '12:00' },
+  { day: 'Monday', period: 4, subject: 'Lunch', teacher: '', startTime: '12:00', endTime: '13:00' },
+  { day: 'Monday', period: 5, subject: 'English', teacher: 'Ms. Taylor', startTime: '13:00', endTime: '14:00' },
+  // Tuesday
+  { day: 'Tuesday', period: 1, subject: 'Science', teacher: 'Ms. Jones', startTime: '09:00', endTime: '10:00' },
+  { day: 'Tuesday', period: 2, subject: 'English', teacher: 'Ms. Taylor', startTime: '10:00', endTime: '11:00' },
+  { day: 'Tuesday', period: 3, subject: 'Art', teacher: 'Ms. Wilson', startTime: '11:00', endTime: '12:00' },
+  { day: 'Tuesday', period: 4, subject: 'Lunch', teacher: '', startTime: '12:00', endTime: '13:00' },
+  { day: 'Tuesday', period: 5, subject: 'Mathematics', teacher: 'Mr. Smith', startTime: '13:00', endTime: '14:00' },
+  // Wednesday
+  { day: 'Wednesday', period: 1, subject: 'History', teacher: 'Mr. Davis', startTime: '09:00', endTime: '10:00' },
+  { day: 'Wednesday', period: 2, subject: 'Physical Education', teacher: 'Mr. Brown', startTime: '10:00', endTime: '11:00' },
+  { day: 'Wednesday', period: 3, subject: 'Science', teacher: 'Ms. Jones', startTime: '11:00', endTime: '12:00' },
+  { day: 'Wednesday', period: 4, subject: 'Lunch', teacher: '', startTime: '12:00', endTime: '13:00' },
+  // Thursday
+  { day: 'Thursday', period: 1, subject: 'English', teacher: 'Ms. Taylor', startTime: '09:00', endTime: '10:00' },
+  { day: 'Thursday', period: 2, subject: 'Mathematics', teacher: 'Mr. Smith', startTime: '10:00', endTime: '11:00' },
+  { day: 'Thursday', period: 3, subject: 'History', teacher: 'Mr. Davis', startTime: '11:00', endTime: '12:00' },
+  { day: 'Thursday', period: 4, subject: 'Lunch', teacher: '', startTime: '12:00', endTime: '13:00' },
+  { day: 'Thursday', period: 5, subject: 'Science', teacher: 'Ms. Jones', startTime: '13:00', endTime: '14:00' },
+  // Friday
+  { day: 'Friday', period: 1, subject: 'Art', teacher: 'Ms. Wilson', startTime: '09:00', endTime: '10:00' },
+  { day: 'Friday', period: 2, subject: 'History', teacher: 'Mr. Davis', startTime: '10:00', endTime: '11:00' },
+  { day: 'Friday', period: 3, subject: 'Mathematics', teacher: 'Mr. Smith', startTime: '11:00', endTime: '12:00' },
+  { day: 'Friday', period: 4, subject: 'Lunch', teacher: '', startTime: '12:00', endTime: '13:00' },
 ];

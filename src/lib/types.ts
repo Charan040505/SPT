@@ -1,4 +1,5 @@
 
+
 export type UserRole = 'admin' | 'student' | 'parent';
 
 export type User = {
@@ -45,4 +46,13 @@ export type StudentMarks = {
     finalInternal: number;
     total: number;
     grade: string;
+};
+
+export type TimetableEntry = {
+  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday';
+  period: number;
+  subject: string;
+  teacher: string;
+  startTime: string;
+  endTime: string;
 };
