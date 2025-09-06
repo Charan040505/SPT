@@ -19,20 +19,22 @@ export async function POST(request: Request) {
          return NextResponse.json({ message: 'Invalid or expired session token.' }, { status: 400 });
     }
     
-    const userToVerify = Object.values(users).find(u => u.verificationToken === token);
-
-    if (!userToVerify || userToVerify.email !== userData.email) {
-       return NextResponse.json({ message: 'Invalid verification token or user does not exist.' }, { status: 400 });
-    }
-    
     const existingUser = users[userData.email];
 
+    if (!existingUser) {
+       return NextResponse.json({ message: 'User does not exist.' }, { status: 400 });
+    }
+
+    if (!existingUser.isVerified) {
+        return NextResponse.json({ message: 'User email not verified. Something went wrong.'}, { status: 400 });
+    }
+    
     const updatedUser: User = {
         ...existingUser,
         name: userData.name,
         password: userData.password, // In a real app, hash this password
         isVerified: true,
-        verificationToken: undefined, // Clear the token after verification
+        verificationToken: undefined, // Token has been used
         avatarUrl: `https://picsum.photos/seed/${userData.email}/100`, 
     };
 
