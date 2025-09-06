@@ -14,6 +14,7 @@ import {
   Contact,
   BookText,
   BookCopy,
+  ClipboardList,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -49,6 +50,7 @@ const navLinks: NavLink[] = [
   { href: "/dashboard", icon: Home, label: "Dashboard", roles: ["admin", "student", "parent"] },
   { href: "/dashboard/students", icon: Users, label: "Students", roles: ["admin"] },
   { href: "/dashboard/teachers", icon: Contact, label: "Teachers", roles: ["student"] },
+  { href: "/dashboard/assignments", icon: ClipboardList, label: "Assignments", roles: ["student", "admin"] },
   { href: "/dashboard/syllabus", icon: BookText, label: "Syllabus", roles: ["student", "admin"] },
   { href: "/dashboard/notes", icon: BookCopy, label: "Notes", roles: ["student", "admin"] },
   { href: "/dashboard/analytics", icon: BarChart2, label: "Analytics", roles: ["admin", "student"] },

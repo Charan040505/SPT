@@ -1,5 +1,4 @@
 
-
 export type UserRole = 'admin' | 'student' | 'parent';
 
 export type User = {
@@ -77,4 +76,13 @@ export type Note = {
   fileUrl: string;
   fileType: 'PDF' | 'DOC';
   uploadedAt: string; 
+};
+
+export type Assignment = {
+    id: string;
+    subject: string;
+    title: string;
+    description: string;
+    dueDate: string;
+    status: 'Pending' | 'Submitted' | 'Late';
 };

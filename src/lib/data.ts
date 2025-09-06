@@ -1,6 +1,5 @@
 
-
-import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry, Teacher, Syllabus, Note } from '@/lib/types';
+import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry, Teacher, Syllabus, Note, Assignment } from '@/lib/types';
 
 export const users: Record<string, User> = {
   'admin@educlarity.com': {
@@ -211,4 +210,11 @@ export const notesData: Note[] = [
     { id: 'N04', subject: 'Science', title: 'Unit 2: The Periodic Table', fileUrl: '/notes/sci-chemistry.docx', fileType: 'DOC', uploadedAt: '2023-09-15' },
     { id: 'N05', subject: 'History', title: 'Ancient Civilizations: Rome', fileUrl: '/notes/hist-rome.pdf', fileType: 'PDF', uploadedAt: '2023-09-10' },
     { id: 'N06', subject: 'English', title: 'Literary Devices and Their Uses', fileUrl: '/notes/eng-lit-devices.pdf', fileType: 'PDF', uploadedAt: '2023-09-11' },
+];
+
+export const assignmentsData: Assignment[] = [
+    { id: 'A01', subject: 'Mathematics', title: 'Algebra Worksheet', description: 'Complete all questions in the attached worksheet.', dueDate: '2024-07-25', status: 'Pending' },
+    { id: 'A02', subject: 'Science', title: 'Lab Report: Photosynthesis', description: 'Write a 2-page lab report on the photosynthesis experiment.', dueDate: '2024-07-22', status: 'Submitted' },
+    { id: 'A03', subject: 'History', title: 'Essay on the Roman Empire', description: 'A 1000-word essay on the fall of the Roman Empire.', dueDate: '2024-07-20', status: 'Late' },
+    { id: 'A04', subject: 'English', title: 'Book Review: To Kill a Mockingbird', description: 'Submit a 500-word review of the book.', dueDate: '2024-07-30', status: 'Pending' },
 ];
