@@ -34,7 +34,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import Logo from '@/components/logo';
 import type { UserRole } from '@/lib/types';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle } from 'lucide-react';
 import { users } from '@/lib/data';
 
 const formSchema = z.object({
@@ -48,6 +48,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [verificationLink, setVerificationLink] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -59,10 +60,10 @@ export default function RegisterPage() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
+    setVerificationLink(null);
     try {
-      // Check if user already exists
-      if (users[data.email]) {
-        throw new Error("An account with this email already exists.");
+      if (users[data.email] && users[data.email].isVerified) {
+        throw new Error("An account with this email already exists and is verified.");
       }
 
       const response = await fetch('/api/auth/send-verification', {
@@ -77,12 +78,11 @@ export default function RegisterPage() {
         throw new Error(responseData.message || 'Failed to get verification token.');
       }
       
+      setVerificationLink(`/register/complete?token=${responseData.token}`);
       toast({
-        title: "Verification Link Sent",
-        description: "A verification link has been sent to your console. Please use it to complete registration.",
+        title: "Verification Link Generated",
+        description: "Please use the link below to complete your registration.",
       });
-      
-      router.push(`/register/complete?token=${responseData.token}`);
 
     } catch (error: any) {
       toast({
@@ -90,7 +90,8 @@ export default function RegisterPage() {
         title: "Uh oh! Something went wrong.",
         description: error.message || "There was a problem with your request.",
       });
-       setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -109,54 +110,67 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Your Role</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(value as UserRole)}
-                      defaultValue={field.value}
-                    >
+          {!verificationLink ? (
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your role" />
-                        </SelectTrigger>
+                        <Input placeholder="m@example.com" {...field} />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="student">Student</SelectItem>
-                        <SelectItem value="admin">Admin/Teacher</SelectItem>
-                        <SelectItem value="parent">Parent</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Your Role</FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(value as UserRole)}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="student">Student</SelectItem>
+                          <SelectItem value="admin">Admin/Teacher</SelectItem>
+                          <SelectItem value="parent">Parent</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Proceeding..." : "Continue"}
-              </Button>
-            </form>
-          </Form>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isLoading ? "Generating Link..." : "Continue"}
+                </Button>
+              </form>
+            </Form>
+          ) : (
+             <div className="text-center space-y-4">
+                <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
+                <h3 className="text-xl font-semibold">Verification Required</h3>
+                <p className="text-muted-foreground">
+                    Click the link below to verify your email and complete your registration.
+                </p>
+                <Button asChild className="w-full">
+                    <Link href={verificationLink}>Complete Registration</Link>
+                </Button>
+             </div>
+          )}
           <div className="mt-4 text-center text-sm">
             Already have an account?{' '}
             <Link href="/login" className="underline">
