@@ -5,6 +5,7 @@ export type User = {
   name: string;
   email: string;
   role: UserRole;
+  password?: string; // Add password to user type
   avatarUrl?: string;
   studentId?: string; // For student and parent roles
   teacherId?: string; // For admin/teacher role

@@ -7,15 +7,17 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, password } = body;
 
-    // In a real app, you would:
-    // 1. Find the user by email in your database
-    // 2. Compare the hashed password
-    // 3. Check if the email is verified
-    // 4. Issue a JWT token
     const user = users[email];
 
-    if (user && password === 'password') { // Simplified password check for demo
-       return NextResponse.json({ message: 'Login successful', user }, { status: 200 });
+    // For new users, we don't have a password stored, so we accept any for this demo.
+    // For existing demo users, we check against "password".
+    const passwordIsValid = user && (user.password ? password === user.password : true);
+
+
+    if (user && passwordIsValid) {
+       // In a real app, you would issue a JWT token here and not send the password back.
+       const { password, ...userToSend } = user;
+       return NextResponse.json({ message: 'Login successful', user: userToSend }, { status: 200 });
     }
     
     return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });

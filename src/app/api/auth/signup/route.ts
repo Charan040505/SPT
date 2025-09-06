@@ -1,6 +1,8 @@
 
 import { NextResponse } from 'next/server';
 import { verify } from 'jsonwebtoken';
+import { users } from '@/lib/data';
+import type { User } from '@/lib/types';
 
 export async function POST(request: Request) {
   try {
@@ -18,11 +20,27 @@ export async function POST(request: Request) {
          return NextResponse.json({ message: 'Invalid or expired session token.' }, { status: 400 });
     }
 
-    // In a real app, you would:
-    // 2. Validate the rest of the user data (name, password strength, etc.)
-    // 3. Hash the password (e.g., with bcrypt)
-    // 4. Save the new user and their role-specific data to your database tables.
-    // 5. Mark the user's email as verified.
+    // In a real app, you would save to a database.
+    // For this demo, we'll add the user to our in-memory object.
+    const newUser: User = {
+        name: userData.name,
+        email: userData.email,
+        role: userData.role,
+        // In a real app, you'd handle avatar uploads and associations
+        avatarUrl: `https://picsum.photos/seed/${userData.email}/100`, 
+    };
+
+    if (userData.role === 'student') {
+        newUser.studentId = userData.rollNo;
+    } else if (userData.role === 'parent') {
+        newUser.studentId = userData.studentId;
+    } else if (userData.role === 'admin') {
+        // You might have a flow to assign a teacher ID here
+    }
+
+    users[userData.email] = newUser;
+    console.log('New user added:', users[userData.email]);
+
 
     console.log('Signup complete for:', userData.email, 'with role:', userData.role);
     console.log('User data:', userData);
