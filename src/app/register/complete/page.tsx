@@ -250,7 +250,7 @@ function CompleteRegistrationForm() {
                            <Input placeholder="e.g. 21" {...field as any} />
                         </FormControl>
                         <FormMessage />
-                      </Ite_m>
+                      </FormItem>
                     )}
                   />
                 </>
