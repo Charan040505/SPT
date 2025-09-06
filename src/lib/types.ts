@@ -69,3 +69,12 @@ export type Syllabus = {
     subject: string;
     fileUrl: string;
 }
+
+export type Note = {
+  id: string;
+  subject: string;
+  title: string;
+  fileUrl: string;
+  fileType: 'PDF' | 'DOC';
+  uploadedAt: string; 
+};

@@ -1,6 +1,6 @@
 
 
-import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry, Teacher, Syllabus } from '@/lib/types';
+import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry, Teacher, Syllabus, Note } from '@/lib/types';
 
 export const users: Record<string, User> = {
   'admin@educlarity.com': {
@@ -203,3 +203,12 @@ export const syllabusData: Syllabus[] = [
     { subject: 'Art', fileUrl: '/syllabus/art-syllabus.pdf' },
     { subject: 'Physical Education', fileUrl: '/syllabus/pe-syllabus.pdf' },
 ]
+
+export const notesData: Note[] = [
+    { id: 'N01', subject: 'Mathematics', title: 'Chapter 1: Algebra Basics', fileUrl: '/notes/math-algebra.pdf', fileType: 'PDF', uploadedAt: '2023-09-05' },
+    { id: 'N02', subject: 'Mathematics', title: 'Chapter 2: Geometry Fundamentals', fileUrl: '/notes/math-geometry.pdf', fileType: 'PDF', uploadedAt: '2023-09-12' },
+    { id: 'N03', subject: 'Science', title: 'Unit 1: Introduction to Biology', fileUrl: '/notes/sci-biology.pdf', fileType: 'PDF', uploadedAt: '2023-09-08' },
+    { id: 'N04', subject: 'Science', title: 'Unit 2: The Periodic Table', fileUrl: '/notes/sci-chemistry.docx', fileType: 'DOC', uploadedAt: '2023-09-15' },
+    { id: 'N05', subject: 'History', title: 'Ancient Civilizations: Rome', fileUrl: '/notes/hist-rome.pdf', fileType: 'PDF', uploadedAt: '2023-09-10' },
+    { id: 'N06', subject: 'English', title: 'Literary Devices and Their Uses', fileUrl: '/notes/eng-lit-devices.pdf', fileType: 'PDF', uploadedAt: '2023-09-11' },
+];
