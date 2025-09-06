@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -43,9 +44,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function RegisterPage() {
+  const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [isEmailSent, setIsEmailSent] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -67,10 +68,11 @@ export default function RegisterPage() {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(responseData.message || 'Failed to send verification email.');
+        throw new Error(responseData.message || 'Failed to get verification token.');
       }
       
-      setIsEmailSent(true);
+      // Directly redirect to the completion page with the token
+      router.push(`/register/complete?token=${responseData.token}`);
 
     } catch (error: any) {
       toast({
@@ -78,35 +80,10 @@ export default function RegisterPage() {
         title: "Uh oh! Something went wrong.",
         description: error.message || "There was a problem with your request.",
       });
-    } finally {
-        setIsLoading(false);
+       setIsLoading(false);
     }
   };
   
-  if (isEmailSent) {
-      return (
-        <div className="flex min-h-screen flex-col items-center justify-center p-4">
-             <div className="absolute top-8 left-8">
-                <Logo />
-            </div>
-            <Card className="w-full max-w-md text-center">
-                <CardHeader>
-                    <CardTitle className="font-headline text-3xl">Check Your Email</CardTitle>
-                    <CardDescription>
-                        We've sent a verification link to the email address you provided. Please click the link to continue.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                        Didn't receive an email? <Button variant="link" className="p-0 h-auto" onClick={() => form.handleSubmit(onSubmit)()}>Resend Link</Button>
-                    </p>
-                </CardContent>
-            </Card>
-        </div>
-      )
-  }
-
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
       <div className="absolute top-8 left-8">
@@ -166,7 +143,7 @@ export default function RegisterPage() {
 
               <Button type="submit" className="w-full" disabled={isLoading}>
                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isLoading ? "Sending Link..." : "Send Verification Email"}
+                {isLoading ? "Proceeding..." : "Continue"}
               </Button>
             </form>
           </Form>
