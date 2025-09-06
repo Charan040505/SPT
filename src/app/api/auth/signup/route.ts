@@ -11,15 +11,17 @@ export async function POST(request: Request) {
 
     const secret = process.env.JWT_SECRET || 'your-super-secret-key';
      try {
-        const decoded = verify(token, secret) as { email: string, role: string, verificationToken: string };
-        if (decoded.email !== userData.email || decoded.verificationToken !== token) {
-            return NextResponse.json({ message: 'Token is invalid or does not match.' }, { status: 400 });
+        const decoded = verify(token, secret) as { email: string, role: string };
+        if (decoded.email !== userData.email) {
+            return NextResponse.json({ message: 'Token does not match user data.' }, { status: 400 });
         }
     } catch (err) {
          return NextResponse.json({ message: 'Invalid or expired session token.' }, { status: 400 });
     }
     
-    if (!users[userData.email] || users[userData.email].verificationToken !== token) {
+    const userToVerify = Object.values(users).find(u => u.verificationToken === token);
+
+    if (!userToVerify || userToVerify.email !== userData.email) {
        return NextResponse.json({ message: 'Invalid verification token or user does not exist.' }, { status: 400 });
     }
     
@@ -38,7 +40,10 @@ export async function POST(request: Request) {
         updatedUser.studentId = userData.rollNo;
     } else if (userData.role === 'parent') {
         updatedUser.studentId = userData.studentId;
+    } else if (userData.role === 'admin') {
+        // In a real app, you might assign teacher details differently
     }
+
 
     users[userData.email] = updatedUser;
     
