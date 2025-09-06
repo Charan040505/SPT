@@ -6,7 +6,7 @@ import type { UserRole } from '@/lib/types';
 import sgMail from '@sendgrid/mail';
 
 async function sendVerificationEmail(email: string, token: string) {
-    const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL}/register/complete?token=${token}`;
+    const verificationLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:9002'}/register/complete?token=${token}`;
     
     // Check if SendGrid API Key and From Email are configured
     if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL) {
@@ -45,6 +45,7 @@ export async function POST(request: Request) {
   try {
     const { email, role } = await request.json() as { email: string, role: UserRole };
 
+    // If the user exists and is already verified, block the request.
     if (users[email]?.isVerified) {
       return NextResponse.json({ message: 'This email is already registered and verified.' }, { status: 400 });
     }
@@ -52,11 +53,10 @@ export async function POST(request: Request) {
     const secret = process.env.JWT_SECRET || 'your-super-secret-key';
     const verificationToken = sign({ email, role }, secret, { expiresIn: '1h' });
 
-    // Store the token with a temporary user object so we can find it later
-    // In a real DB, you'd save this to the user's record
+    // Create or update the user with the new verification token.
+    // This handles both new signups and re-attempts for unverified emails.
     users[email] = {
-      ...users[email],
-      name: 'New User',
+      name: 'New User', // Placeholder name
       email,
       role,
       isVerified: false,
