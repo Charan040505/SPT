@@ -36,3 +36,13 @@ export type AttendanceTrend = {
     month: string;
     percentage: number;
 }
+
+export type StudentMarks = {
+    subject: string;
+    mid1: number;
+    mid2: number;
+    external: number;
+    finalInternal: number;
+    total: number;
+    grade: string;
+};

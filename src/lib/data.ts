@@ -1,5 +1,5 @@
 
-import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend } from '@/lib/types';
+import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks } from '@/lib/types';
 
 export const users: Record<string, User> = {
   'admin@educlarity.com': {
@@ -132,4 +132,24 @@ export const studentAttendanceTrend: AttendanceTrend[] = [
     { month: 'Apr', percentage: 93 },
     { month: 'May', percentage: 90 },
     { month: 'Jun', percentage: 96 },
+];
+
+function calculateMarks(mid1: number, mid2: number, external: number): Omit<StudentMarks, 'subject'> {
+    const finalInternal = (mid1 + mid2) / 2;
+    const total = finalInternal + external;
+    let grade = 'F';
+    if (total >= 90) grade = 'A+';
+    else if (total >= 80) grade = 'A';
+    else if (total >= 70) grade = 'B';
+    else if (total >= 60) grade = 'C';
+    else if (total >= 50) grade = 'D';
+
+    return { mid1, mid2, finalInternal, external, total, grade };
+}
+
+export const studentMarksData: StudentMarks[] = [
+    { subject: 'Mathematics', ...calculateMarks(42, 45, 48) },
+    { subject: 'Science', ...calculateMarks(40, 48, 49) },
+    { subject: 'History', ...calculateMarks(48, 49, 50) },
+    { subject: 'English', ...calculateMarks(35, 40, 42) },
 ];
