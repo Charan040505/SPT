@@ -1,6 +1,6 @@
 
 
-import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry, Teacher } from '@/lib/types';
+import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry, Teacher, Syllabus } from '@/lib/types';
 
 export const users: Record<string, User> = {
   'admin@educlarity.com': {
@@ -193,4 +193,13 @@ export const teachers: Teacher[] = [
     { id: 'T04', name: 'Ms. Taylor', subject: 'English', email: 'taylor.eng@educlarity.com', avatarUrl: 'https://picsum.photos/id/1078/100' },
     { id: 'T05', name: 'Ms. Wilson', subject: 'Art', email: 'wilson.art@educlarity.com', avatarUrl: 'https://picsum.photos/id/1084/100' },
     { id: 'T06', name: 'Mr. Brown', subject: 'Physical Education', email: 'brown.pe@educlarity.com', avatarUrl: 'https://picsum.photos/id/102/100' }
+]
+
+export const syllabusData: Syllabus[] = [
+    { subject: 'Mathematics', fileUrl: '/syllabus/math-syllabus.pdf' },
+    { subject: 'Science', fileUrl: '/syllabus/science-syllabus.pdf' },
+    { subject: 'History', fileUrl: '/syllabus/history-syllabus.pdf' },
+    { subject: 'English', fileUrl: '/syllabus/english-syllabus.pdf' },
+    { subject: 'Art', fileUrl: '/syllabus/art-syllabus.pdf' },
+    { subject: 'Physical Education', fileUrl: '/syllabus/pe-syllabus.pdf' },
 ]

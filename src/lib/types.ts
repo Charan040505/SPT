@@ -64,3 +64,8 @@ export type TimetableEntry = {
   startTime: string;
   endTime: string;
 };
+
+export type Syllabus = {
+    subject: string;
+    fileUrl: string;
+}
