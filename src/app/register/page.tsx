@@ -34,7 +34,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import Logo from '@/components/logo';
 import type { UserRole } from '@/lib/types';
-import { Loader2, CheckCircle } from 'lucide-react';
+import { Loader2, CheckCircle, MailCheck } from 'lucide-react';
 import { users } from '@/lib/data';
 
 const formSchema = z.object({
@@ -48,6 +48,8 @@ export default function RegisterPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  // This state is for local dev simulation when SendGrid is not configured
   const [verificationLink, setVerificationLink] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
@@ -60,7 +62,9 @@ export default function RegisterPage() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
+    setEmailSent(false);
     setVerificationLink(null);
+
     try {
       if (users[data.email] && users[data.email].isVerified) {
         throw new Error("An account with this email already exists and is verified.");
@@ -75,14 +79,23 @@ export default function RegisterPage() {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(responseData.message || 'Failed to get verification token.');
+        throw new Error(responseData.message || 'Failed to send verification email.');
       }
       
-      setVerificationLink(`/register/complete?token=${responseData.token}`);
-      toast({
-        title: "Verification Link Generated",
-        description: "Please use the link below to complete your registration.",
-      });
+      // If the API is in simulation mode, it returns the token directly
+      if (responseData.token) {
+        setVerificationLink(`/register/complete?token=${responseData.token}`);
+         toast({
+          title: "Verification Link Generated (Dev Mode)",
+          description: "Please use the link below to complete your registration.",
+        });
+      } else {
+        setEmailSent(true);
+        toast({
+          title: "Verification Email Sent",
+          description: "Please check your inbox to complete your registration.",
+        });
+      }
 
     } catch (error: any) {
       toast({
@@ -110,7 +123,7 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {!verificationLink ? (
+          {!emailSent && !verificationLink ? (
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -155,20 +168,32 @@ export default function RegisterPage() {
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isLoading ? "Generating Link..." : "Continue"}
+                  {isLoading ? "Sending verification..." : "Continue"}
                 </Button>
               </form>
             </Form>
           ) : (
              <div className="text-center space-y-4">
-                <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
-                <h3 className="text-xl font-semibold">Verification Required</h3>
-                <p className="text-muted-foreground">
-                    Click the link below to verify your email and complete your registration.
-                </p>
-                <Button asChild className="w-full">
-                    <Link href={verificationLink}>Complete Registration</Link>
-                </Button>
+                {verificationLink ? (
+                  <>
+                    <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
+                    <h3 className="text-xl font-semibold">Verification Required (Dev Mode)</h3>
+                    <p className="text-muted-foreground">
+                        Click the link below to verify your email and complete your registration.
+                    </p>
+                    <Button asChild className="w-full">
+                        <Link href={verificationLink}>Complete Registration</Link>
+                    </Button>
+                  </>
+                ) : (
+                   <>
+                    <MailCheck className="mx-auto h-12 w-12 text-primary" />
+                    <h3 className="text-xl font-semibold">Check Your Email</h3>
+                    <p className="text-muted-foreground">
+                        We've sent a verification link to your email address. Please click the link to continue.
+                    </p>
+                  </>
+                )}
              </div>
           )}
           <div className="mt-4 text-center text-sm">
