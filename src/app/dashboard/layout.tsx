@@ -60,6 +60,8 @@ const navLinks: NavLink[] = [
 ];
 
 function NavContent({ role }: { role: UserRole }) {
+  const filteredNavLinks = navLinks.filter(link => link.roles.includes(role));
+  
   return (
     <TooltipProvider>
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
@@ -70,9 +72,7 @@ function NavContent({ role }: { role: UserRole }) {
           <Book className="h-4 w-4 transition-all group-hover:scale-110" />
           <span className="sr-only">EduClarity</span>
         </Link>
-        {navLinks
-          .filter(link => link.roles.includes(role))
-          .map((link) => (
+        {filteredNavLinks.map((link) => (
             <Tooltip key={link.href}>
               <TooltipTrigger asChild>
                 <Link
@@ -94,6 +94,7 @@ function NavContent({ role }: { role: UserRole }) {
 function Header({ role }: { role: UserRole }) {
     const user = users[`${role}@educlarity.com`];
     const userInitial = user ? user.name.charAt(0).toUpperCase() : role.charAt(0).toUpperCase();
+    const filteredNavLinks = navLinks.filter(link => link.roles.includes(role));
 
     return (
         <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -107,9 +108,7 @@ function Header({ role }: { role: UserRole }) {
                 <SheetContent side="left" className="sm:max-w-xs">
                     <nav className="grid gap-6 text-lg font-medium">
                         <Logo />
-                        {navLinks
-                            .filter(link => link.roles.includes(role))
-                            .map((link) => (
+                        {filteredNavLinks.map((link) => (
                                 <Link
                                     key={link.href}
                                     href={link.href + `?role=${role}`}

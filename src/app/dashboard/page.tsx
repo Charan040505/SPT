@@ -13,6 +13,7 @@ function DashboardPageContent({ role }: { role: UserRole }) {
     case 'parent':
       return <ParentView />;
     default:
+      // Fallback to a default view if role is not recognized
       return <StudentView />;
   }
 }

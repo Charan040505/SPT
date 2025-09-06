@@ -19,7 +19,15 @@ import MarksViewer from "./marks-viewer";
 import TimetableView from "./timetable-view";
 
 export default function StudentView() {
-  const student = students.find(s => s.id === 'S001')!;
+  const student = students.find(s => s.id === 'S001');
+
+  if (!student) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p>Student data not found.</p>
+      </div>
+    );
+  }
 
   const mathData = performanceData.filter(p => p.subject === 'Mathematics').map(p => ({ name: p.month, Math: p.score }));
   const scienceData = performanceData.filter(p => p.subject === 'Science').map(p => ({ name: p.month, Science: p.score }));
