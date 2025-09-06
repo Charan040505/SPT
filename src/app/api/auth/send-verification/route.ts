@@ -28,9 +28,9 @@ async function sendVerificationEmail(email: string, token: string) {
             console.log('Verification email sent successfully.');
             return { success: true, message: 'Email sent.' };
         } catch (error: any) {
-            console.error('SendGrid Error:', error.response?.body || error.message);
-            // This error often means the "from" email is not verified in SendGrid.
-            throw new Error('Failed to send verification email. Please check server configuration.');
+            console.error('SendGrid Error:', error);
+            const errorMessage = error.response?.body?.errors[0]?.message || 'Failed to send verification email. Please check server configuration.';
+            throw new Error(errorMessage);
         }
     } else {
         // Fallback for local development if SendGrid is not configured
@@ -76,4 +76,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: error.message || 'An error occurred while generating the verification token.' }, { status: 500 });
   }
 }
-
