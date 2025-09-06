@@ -3,27 +3,31 @@ import { NextResponse } from 'next/server';
 import { sign } from 'jsonwebtoken';
 import sgMail from '@sendgrid/mail';
 
-// In a real app, you would use a proper email service
+// Initialize SendGrid
+if (process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
+
 async function sendVerificationEmail(email: string, url: string) {
     if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
-        console.error("SENDGRID_API_KEY or SENDGRID_FROM_EMAIL is not set. Email not sent.");
+        const errorMessage = "Email service is not configured. SENDGRID_API_KEY or SENDGRID_FROM_EMAIL is not set.";
+        console.error(errorMessage);
+        // In a real production environment, you should throw an error to prevent signup flow from proceeding.
+        // For development, we can log to the console and simulate success.
         console.log("--- SIMULATED EMAIL ---");
         console.log(`To: ${email}`);
         console.log("Subject: Verify your email for EduClarity");
-        console.log("Body:");
-        console.log("Please click the link below to verify your email address:");
+        console.log("Body: Please click the link below to verify your email address:");
         console.log(url);
         console.log("--- END SIMULATED EMAIL ---");
-        // In a real scenario, you'd want to throw an error or handle this case more gracefully
-        // For this demo, we allow it to proceed to show the flow, but in production, this should fail.
-        return; 
+        // To avoid breaking the flow in dev when keys are not set, we won't throw an error here.
+        // In a live app, this should be: throw new Error(errorMessage);
+        return;
     }
-
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const msg = {
         to: email,
-        from: process.env.SENDGRID_FROM_EMAIL,
+        from: process.env.SENDGRID_FROM_EMAIL, // This must be a verified sender in your SendGrid account
         subject: 'Verify your email for EduClarity',
         html: `
             <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -41,11 +45,11 @@ async function sendVerificationEmail(email: string, url: string) {
 
     try {
         await sgMail.send(msg);
-        console.log(`Verification email sent to ${email}`);
-    } catch (error) {
-        console.error('Error sending verification email with SendGrid', error);
-        // Re-throw the error to be caught by the main handler
-        throw new Error('Could not send verification email.');
+        console.log(`Verification email sent successfully to ${email}`);
+    } catch (error: any) {
+        console.error('Error sending verification email with SendGrid:', JSON.stringify(error, null, 2));
+        // Provide a more user-friendly error message
+        throw new Error('Could not send verification email. Please ensure the sender email is verified in SendGrid.');
     }
 }
 
@@ -71,8 +75,8 @@ export async function POST(request: Request) {
     await sendVerificationEmail(email, url.toString());
     
     return NextResponse.json({ message: 'Verification email sent.' }, { status: 200 });
-  } catch (error) {
-    console.error('Send Verification Error:', error);
-    return NextResponse.json({ message: 'An error occurred while sending the verification email.' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Send Verification Error:', error.message);
+    return NextResponse.json({ message: error.message || 'An error occurred while sending the verification email.' }, { status: 500 });
   }
 }
