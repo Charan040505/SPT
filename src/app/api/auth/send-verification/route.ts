@@ -3,54 +3,51 @@ import { NextResponse } from 'next/server';
 import { sign } from 'jsonwebtoken';
 import sgMail from '@sendgrid/mail';
 
-// Initialize SendGrid only if the key is present
-if (process.env.SENDGRID_API_KEY) {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
-
+// This function will now handle the logic of sending a real email or simulating it.
 async function sendVerificationEmail(email: string, url: string) {
-    // If SendGrid isn't configured, simulate the email for development
-    if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
-        console.log("--- SIMULATED EMAIL VERIFICATION ---");
-        console.log("Email service is not configured. Simulating email send.");
+    // Only attempt to use SendGrid if BOTH the API key and the from email are set.
+    const useSendGrid = process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL;
+
+    if (useSendGrid) {
+        try {
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+            const msg = {
+                to: email,
+                from: process.env.SENDGRID_FROM_EMAIL!, // This must be a verified sender in your SendGrid account
+                subject: 'Verify your email for EduClarity',
+                html: `
+                    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                        <h2>Welcome to EduClarity!</h2>
+                        <p>Please click the button below to verify your email address and complete your registration.</p>
+                        <a href="${url}" style="background-color: #1a73e8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify Email</a>
+                        <p>If you cannot click the button, please copy and paste this link into your browser:</p>
+                        <p><a href="${url}">${url}</a></p>
+                        <p>If you did not request this email, please ignore it.</p>
+                        <hr />
+                        <p style="font-size: 0.8em; color: #888;">&copy; ${new Date().getFullYear()} EduClarity. All rights reserved.</p>
+                    </div>
+                `,
+            };
+            await sgMail.send(msg);
+            console.log(`Verification email sent successfully to ${email}`);
+        } catch (error: any) {
+            console.error('Error sending verification email with SendGrid:');
+            if (error.response) {
+                console.error(error.response.body)
+            } else {
+                console.error(error);
+            }
+            // Provide a more helpful error message for the most common issue.
+            throw new Error('Could not send verification email. This is often due to an unverified sender email in your SendGrid account. For development, you can remove the SENDGRID_API_KEY from your environment to simulate the email flow.');
+        }
+    } else {
+        // If SendGrid isn't configured, simulate the email for development
+        console.log("--- SIMULATED EMAIL VERIFICATION (SendGrid credentials not found) ---");
         console.log(`To: ${email}`);
         console.log("Subject: Verify your email for EduClarity");
         console.log("Body: Please click the link below to verify your email address:");
         console.log(url);
         console.log("--- END SIMULATED EMAIL ---");
-        return; 
-    }
-
-    const msg = {
-        to: email,
-        from: process.env.SENDGRID_FROM_EMAIL, // This must be a verified sender in your SendGrid account
-        subject: 'Verify your email for EduClarity',
-        html: `
-            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                <h2>Welcome to EduClarity!</h2>
-                <p>Please click the button below to verify your email address and complete your registration.</p>
-                <a href="${url}" style="background-color: #1a73e8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify Email</a>
-                <p>If you cannot click the button, please copy and paste this link into your browser:</p>
-                <p><a href="${url}">${url}</a></p>
-                <p>If you did not request this email, please ignore it.</p>
-                <hr />
-                <p style="font-size: 0.8em; color: #888;">&copy; ${new Date().getFullYear()} EduClarity. All rights reserved.</p>
-            </div>
-        `,
-    };
-
-    try {
-        await sgMail.send(msg);
-        console.log(`Verification email sent successfully to ${email}`);
-    } catch (error: any) {
-        console.error('Error sending verification email with SendGrid:');
-        if (error.response) {
-            console.error(error.response.body)
-        } else {
-            console.error(error);
-        }
-        // Provide a more helpful error message for the most common issue.
-        throw new Error('Could not send verification email. This is often due to an unverified sender email in your SendGrid account. For development, you can remove the SENDGRID_API_KEY from your environment to simulate the email flow.');
     }
 }
 
@@ -66,7 +63,6 @@ export async function POST(request: Request) {
     const token = sign({ email, role }, secret, { expiresIn: '1h' });
 
     // Construct the verification URL.
-    // In production, you'd use your actual domain from environment variables.
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || new URL('/', request.url).toString();
     const url = new URL('/verify-email', baseUrl);
     url.searchParams.set('token', token);
