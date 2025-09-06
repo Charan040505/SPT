@@ -1,3 +1,4 @@
+
 import type { ReactNode, SuspenseProps } from "react";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -9,6 +10,7 @@ import {
   PanelLeft,
   Search,
   BarChart2,
+  Contact,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -43,6 +45,7 @@ type NavLink = {
 const navLinks: NavLink[] = [
   { href: "/dashboard", icon: Home, label: "Dashboard", roles: ["admin", "student", "parent"] },
   { href: "/dashboard/students", icon: Users, label: "Students", roles: ["admin"] },
+  { href: "/dashboard/teachers", icon: Contact, label: "Teachers", roles: ["student"] },
   { href: "/dashboard/analytics", icon: BarChart2, label: "Analytics", roles: ["admin", "student"] },
   { href: "/dashboard/settings", icon: Settings, label: "Settings", roles: ["admin", "student", "parent"] },
 ];

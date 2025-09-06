@@ -1,5 +1,6 @@
 
-import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry } from '@/lib/types';
+
+import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend, StudentMarks, TimetableEntry, Teacher } from '@/lib/types';
 
 export const users: Record<string, User> = {
   'admin@educlarity.com': {
@@ -184,3 +185,12 @@ export const timetableData: TimetableEntry[] = [
   { day: 'Friday', period: 3, subject: 'Mathematics', teacher: 'Mr. Smith', startTime: '11:00', endTime: '12:00' },
   { day: 'Friday', period: 4, subject: 'Lunch', teacher: '', startTime: '12:00', endTime: '13:00' },
 ];
+
+export const teachers: Teacher[] = [
+    { id: 'T01', name: 'Mr. Smith', subject: 'Mathematics', email: 'smith.math@educlarity.com', avatarUrl: 'https://picsum.photos/id/1062/100' },
+    { id: 'T02', name: 'Ms. Jones', subject: 'Science', email: 'jones.sci@educlarity.com', avatarUrl: 'https://picsum.photos/id/1072/100' },
+    { id: 'T03', name: 'Mr. Davis', subject: 'History', email: 'davis.hist@educlarity.com', avatarUrl: 'https://picsum.photos/id/1075/100' },
+    { id: 'T04', name: 'Ms. Taylor', subject: 'English', email: 'taylor.eng@educlarity.com', avatarUrl: 'https://picsum.photos/id/1078/100' },
+    { id: 'T05', name: 'Ms. Wilson', subject: 'Art', email: 'wilson.art@educlarity.com', avatarUrl: 'https://picsum.photos/id/1084/100' },
+    { id: 'T06', name: 'Mr. Brown', subject: 'Physical Education', email: 'brown.pe@educlarity.com', avatarUrl: 'https://picsum.photos/id/102/100' }
+]

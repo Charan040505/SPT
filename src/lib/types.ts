@@ -21,6 +21,14 @@ export type Student = {
   status: 'Excelling' | 'On Track' | 'Needs Improvement' | 'At Risk';
 };
 
+export type Teacher = {
+    id: string;
+    name: string;
+    subject: string;
+    email: string;
+    avatarUrl: string;
+}
+
 export type PerformanceData = {
   month: string;
   score: number;
