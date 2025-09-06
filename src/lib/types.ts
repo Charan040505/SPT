@@ -1,3 +1,4 @@
+
 export type UserRole = 'admin' | 'student' | 'parent';
 
 export type User = {
@@ -24,3 +25,14 @@ export type PerformanceData = {
   score: number;
   subject: string;
 };
+
+export type AttendanceData = {
+  subject: string;
+  totalClasses: number;
+  attendedClasses: number;
+};
+
+export type AttendanceTrend = {
+    month: string;
+    percentage: number;
+}

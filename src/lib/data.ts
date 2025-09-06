@@ -1,4 +1,5 @@
-import type { Student, PerformanceData, User } from '@/lib/types';
+
+import type { Student, PerformanceData, User, AttendanceData, AttendanceTrend } from '@/lib/types';
 
 export const users: Record<string, User> = {
   'admin@educlarity.com': {
@@ -113,4 +114,22 @@ export const classPerformance = [
     { name: 'History', average: 91, highest: 100, lowest: 75 },
     { name: 'English', average: 88, highest: 99, lowest: 72 },
     { name: 'Art', average: 94, highest: 100, lowest: 85 },
-]
+];
+
+export const studentAttendanceData: AttendanceData[] = [
+    { subject: 'Mathematics', totalClasses: 60, attendedClasses: 58 },
+    { subject: 'Science', totalClasses: 55, attendedClasses: 54 },
+    { subject: 'History', totalClasses: 50, attendedClasses: 49 },
+    { subject: 'English', totalClasses: 58, attendedClasses: 55 },
+    { subject: 'Art', totalClasses: 40, attendedClasses: 35 },
+    { subject: 'Physical Education', totalClasses: 35, attendedClasses: 20 },
+];
+
+export const studentAttendanceTrend: AttendanceTrend[] = [
+    { month: 'Jan', percentage: 92 },
+    { month: 'Feb', percentage: 95 },
+    { month: 'Mar', percentage: 88 },
+    { month: 'Apr', percentage: 93 },
+    { month: 'May', percentage: 90 },
+    { month: 'Jun', percentage: 96 },
+];

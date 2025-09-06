@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -11,8 +12,9 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { performanceData, students } from "@/lib/data";
+import { performanceData, students, studentAttendanceData, studentAttendanceTrend } from "@/lib/data";
 import PersonalizedRecommendations from "./personalized-recommendations";
+import AttendanceTracker from "./attendance-tracker";
 
 export default function StudentView() {
   const student = students.find(s => s.id === 'S001')!;
@@ -71,6 +73,10 @@ export default function StudentView() {
             <p className="text-xs text-muted-foreground">Scored over 90%</p>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="space-y-6">
+        <AttendanceTracker attendanceData={studentAttendanceData} attendanceTrend={studentAttendanceTrend} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
