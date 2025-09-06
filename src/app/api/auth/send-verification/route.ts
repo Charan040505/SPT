@@ -45,6 +45,10 @@ export async function POST(request: Request) {
   try {
     const { email, role } = await request.json() as { email: string, role: UserRole };
 
+    if (users[email]?.isVerified) {
+      return NextResponse.json({ message: 'This email is already registered and verified.' }, { status: 400 });
+    }
+
     const secret = process.env.JWT_SECRET || 'your-super-secret-key';
     const verificationToken = sign({ email, role }, secret, { expiresIn: '1h' });
 
@@ -52,6 +56,7 @@ export async function POST(request: Request) {
     // In a real DB, you'd save this to the user's record
     users[email] = {
       ...users[email],
+      name: 'New User',
       email,
       role,
       isVerified: false,
@@ -60,19 +65,15 @@ export async function POST(request: Request) {
     
     const emailResult = await sendVerificationEmail(email, verificationToken);
 
-    if (emailResult.success) {
-        return NextResponse.json({ 
-            message: 'Verification email sent successfully. Please check your inbox.',
-            // For local dev, we might get the link back
-            token: process.env.SENDGRID_API_KEY ? undefined : verificationToken,
-        }, { status: 200 });
-    } else {
-         throw new Error('Failed to send verification email.');
-    }
-
+    return NextResponse.json({ 
+        message: 'Verification email sent successfully. Please check your inbox.',
+        // For local dev, we might get the link back
+        verificationLink: emailResult.verificationLink,
+    }, { status: 200 });
 
   } catch (error: any) {
     console.error('Token Generation Error:', error);
     return NextResponse.json({ message: error.message || 'An error occurred while generating the verification token.' }, { status: 500 });
   }
 }
+

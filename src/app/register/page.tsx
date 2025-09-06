@@ -3,7 +3,6 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -35,7 +34,6 @@ import { useToast } from '@/hooks/use-toast';
 import Logo from '@/components/logo';
 import type { UserRole } from '@/lib/types';
 import { Loader2, CheckCircle, MailCheck } from 'lucide-react';
-import { users } from '@/lib/data';
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -45,11 +43,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function RegisterPage() {
-  const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  // This state is for local dev simulation when SendGrid is not configured
   const [verificationLink, setVerificationLink] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
@@ -62,14 +58,10 @@ export default function RegisterPage() {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
-    setEmailSent(false);
     setVerificationLink(null);
+    setEmailSent(false);
 
     try {
-      if (users[data.email] && users[data.email].isVerified) {
-        throw new Error("An account with this email already exists and is verified.");
-      }
-
       const response = await fetch('/api/auth/send-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,10 +74,9 @@ export default function RegisterPage() {
         throw new Error(responseData.message || 'Failed to send verification email.');
       }
       
-      // If the API is in simulation mode, it returns the token directly
-      if (responseData.token) {
-        setVerificationLink(`/register/complete?token=${responseData.token}`);
-         toast({
+      if (responseData.verificationLink) {
+        setVerificationLink(responseData.verificationLink);
+        toast({
           title: "Verification Link Generated (Dev Mode)",
           description: "Please use the link below to complete your registration.",
         });
@@ -100,7 +91,7 @@ export default function RegisterPage() {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
+        title: "Registration Failed",
         description: error.message || "There was a problem with your request.",
       });
     } finally {
