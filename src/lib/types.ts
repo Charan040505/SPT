@@ -7,6 +7,7 @@ export type User = {
   role: UserRole;
   avatarUrl?: string;
   studentId?: string; // For student and parent roles
+  teacherId?: string; // For admin/teacher role
 };
 
 export type Student = {
@@ -67,6 +68,7 @@ export type TimetableEntry = {
 export type Syllabus = {
     subject: string;
     fileUrl: string;
+    teacherId: string;
 }
 
 export type Note = {

@@ -7,6 +7,7 @@ export const users: Record<string, User> = {
     email: 'admin@educlarity.com',
     role: 'admin',
     avatarUrl: 'https://picsum.photos/id/1027/100/100',
+    teacherId: 'T04',
   },
   'student@educlarity.com': {
     name: 'Alex Johnson',
@@ -195,12 +196,12 @@ export const teachers: Teacher[] = [
 ]
 
 export const syllabusData: Syllabus[] = [
-    { subject: 'Mathematics', fileUrl: '/syllabus/math-syllabus.pdf' },
-    { subject: 'Science', fileUrl: '/syllabus/science-syllabus.pdf' },
-    { subject: 'History', fileUrl: '/syllabus/history-syllabus.pdf' },
-    { subject: 'English', fileUrl: '/syllabus/english-syllabus.pdf' },
-    { subject: 'Art', fileUrl: '/syllabus/art-syllabus.pdf' },
-    { subject: 'Physical Education', fileUrl: '/syllabus/pe-syllabus.pdf' },
+    { subject: 'Mathematics', fileUrl: '/syllabus/math-syllabus.pdf', teacherId: 'T01' },
+    { subject: 'Science', fileUrl: '/syllabus/science-syllabus.pdf', teacherId: 'T02' },
+    { subject: 'History', fileUrl: '/syllabus/history-syllabus.pdf', teacherId: 'T03' },
+    { subject: 'English', fileUrl: '/syllabus/english-syllabus.pdf', teacherId: 'T04' },
+    { subject: 'Art', fileUrl: '/syllabus/art-syllabus.pdf', teacherId: 'T05' },
+    { subject: 'Physical Education', fileUrl: '/syllabus/pe-syllabus.pdf', teacherId: 'T06' },
 ]
 
 export const notesData: Note[] = [
