@@ -11,7 +11,7 @@ if (process.env.SENDGRID_API_KEY) {
 async function sendVerificationEmail(email: string, url: string) {
     // If SendGrid isn't configured, simulate the email for development
     if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
-        console.log("--- SIMULATED EMAIL ---");
+        console.log("--- SIMULATED EMAIL VERIFICATION ---");
         console.log("Email service is not configured. Simulating email send.");
         console.log(`To: ${email}`);
         console.log("Subject: Verify your email for EduClarity");
@@ -51,7 +51,7 @@ async function sendVerificationEmail(email: string, url: string) {
             console.error(error);
         }
         // Provide a more helpful error message for the most common issue.
-        throw new Error('Could not send verification email. Please ensure the sender email is verified in your SendGrid account.');
+        throw new Error('Could not send verification email. This is often due to an unverified sender email in your SendGrid account. For development, you can remove the SENDGRID_API_KEY from your environment to simulate the email flow.');
     }
 }
 
