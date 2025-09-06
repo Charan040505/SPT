@@ -5,10 +5,12 @@ export type User = {
   name: string;
   email: string;
   role: UserRole;
-  password?: string; // Add password to user type
+  password?: string;
   avatarUrl?: string;
-  studentId?: string; // For student and parent roles
-  teacherId?: string; // For admin/teacher role
+  studentId?: string; 
+  teacherId?: string;
+  isVerified?: boolean;
+  verificationToken?: string;
 };
 
 export type Student = {

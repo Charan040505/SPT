@@ -35,6 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import Logo from '@/components/logo';
 import type { UserRole } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
+import { users } from '@/lib/data';
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -59,6 +60,11 @@ export default function RegisterPage() {
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
     try {
+      // Check if user already exists
+      if (users[data.email]) {
+        throw new Error("An account with this email already exists.");
+      }
+
       const response = await fetch('/api/auth/send-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -71,7 +77,11 @@ export default function RegisterPage() {
         throw new Error(responseData.message || 'Failed to get verification token.');
       }
       
-      // Directly redirect to the completion page with the token
+      toast({
+        title: "Verification Link Sent",
+        description: "A verification link has been sent to your console. Please use it to complete registration.",
+      });
+      
       router.push(`/register/complete?token=${responseData.token}`);
 
     } catch (error: any) {

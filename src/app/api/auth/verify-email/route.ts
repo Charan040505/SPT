@@ -1,7 +1,8 @@
 
 import { NextResponse } from 'next/server';
-import { verify } from 'jsonwebtoken';
-import type { UserRole } from '@/lib/types';
+import { verify, sign } from 'jsonwebtoken';
+import { users } from '@/lib/data';
+import type { UserRole, User } from '@/lib/types';
 
 export async function POST(request: Request) {
   try {
@@ -14,12 +15,20 @@ export async function POST(request: Request) {
     const secret = process.env.JWT_SECRET || 'your-super-secret-key';
 
     try {
-        const decoded = verify(token, secret) as { email: string, role: UserRole, iat: number, exp: number };
+        const decoded = verify(token, secret) as { email: string, role: UserRole, verificationToken: string };
         
-        // In a real app, you might check if this email is already fully registered and verified.
+        const user = Object.values(users).find(u => u.verificationToken === token);
+
+        if (!user || user.email !== decoded.email) {
+            return NextResponse.json({ message: 'Invalid verification token.' }, { status: 400 });
+        }
+
+        // Mark user as verified
+        user.isVerified = true;
+        user.verificationToken = undefined; // Token has been used
 
         return NextResponse.json({ 
-            message: 'Email token is valid.',
+            message: 'Email successfully verified.',
             email: decoded.email,
             role: decoded.role 
         }, { status: 200 });

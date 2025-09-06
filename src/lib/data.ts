@@ -9,6 +9,7 @@ export const users: Record<string, User> = {
     password: 'password',
     avatarUrl: 'https://picsum.photos/id/1027/100/100',
     teacherId: 'T04',
+    isVerified: true,
   },
   'student@educlarity.com': {
     name: 'Alex Johnson',
@@ -17,6 +18,7 @@ export const users: Record<string, User> = {
     password: 'password',
     studentId: 'S001',
     avatarUrl: 'https://picsum.photos/id/1005/100/100',
+    isVerified: true,
   },
   'parent@educlarity.com': {
     name: 'Maria Johnson',
@@ -25,6 +27,7 @@ export const users: Record<string, User> = {
     password: 'password',
     studentId: 'S001',
     avatarUrl: 'https://picsum.photos/id/1025/100/100',
+    isVerified: true,
   },
 };
 

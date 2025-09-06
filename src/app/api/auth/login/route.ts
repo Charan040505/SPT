@@ -9,13 +9,17 @@ export async function POST(request: Request) {
 
     const user = users[email];
 
-    // For new users, we don't have a password stored, so we accept any for this demo.
-    // For existing demo users, we check against "password".
-    const passwordIsValid = user && (user.password ? password === user.password : true);
+    if (!user) {
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    }
 
+    if (!user.isVerified) {
+        return NextResponse.json({ message: 'Please verify your email before logging in.' }, { status: 403 });
+    }
+
+    const passwordIsValid = user.password ? password === user.password : true;
 
     if (user && passwordIsValid) {
-       // In a real app, you would issue a JWT token here and not send the password back.
        const { password, ...userToSend } = user;
        return NextResponse.json({ message: 'Login successful', user: userToSend }, { status: 200 });
     }
