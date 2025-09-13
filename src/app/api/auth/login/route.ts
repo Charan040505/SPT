@@ -13,10 +13,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    if (!user.isVerified) {
-        return NextResponse.json({ message: 'Please verify your email before logging in.' }, { status: 403 });
-    }
-
+    // Email verification check removed
+    
     const passwordIsValid = user.password ? password === user.password : true;
 
     if (user && passwordIsValid) {

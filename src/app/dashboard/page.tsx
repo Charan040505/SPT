@@ -1,8 +1,11 @@
+'use client';
+
 import { Suspense } from 'react';
 import type { UserRole } from '@/lib/types';
 import AdminView from '@/components/dashboard/admin-view';
 import StudentView from '@/components/dashboard/student-view';
 import ParentView from '@/components/dashboard/parent-view';
+import { useSearchParams } from 'next/navigation';
 
 function DashboardPageContent({ role }: { role: UserRole }) {
   switch (role) {
@@ -18,12 +21,11 @@ function DashboardPageContent({ role }: { role: UserRole }) {
   }
 }
 
-export default function DashboardPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const role = (searchParams?.role as UserRole) || 'student';
+export default function DashboardPage() {
+  const searchParams = useSearchParams();
+  // Fix: Ensure searchParams is available before accessing
+  const roleParam = searchParams ? searchParams.get('role') : null;
+  const role = (roleParam as UserRole) || 'student';
   
   return (
     <Suspense fallback={<div>Loading dashboard...</div>}>
